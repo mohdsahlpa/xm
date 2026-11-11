@@ -2,24 +2,17 @@
  * ============================================================================
  * Program 7: Arithmetic Calculator using Lex & Yacc
  * ============================================================================
- * Description:
- *   Evaluates arithmetic expressions with addition (+), subtraction (-),
- *   multiplication (*), division (/), modulo (%), and parentheses.
- *   Calculates the integer result using semantic actions in Yacc.
- *
+
  * NOTE: This file contains BOTH Lex and Yacc specifications.
  * To compile on Linux / Ubuntu, save the respective sections into two files:
  *   - Section 1 below -> save as '7.l'
  *   - Section 2 below -> save as '7.y'
  *
- * COMPILATION STEPS (Linux / Ubuntu CLI):
- *   1. yacc -d 7.y            # (or: bison -d 7.y) -> generates y.tab.c & y.tab.h
- *   2. lex 7.l                # (or: flex 7.l)     -> generates lex.yy.c
- *   3. gcc y.tab.c lex.yy.c -o 7   # compiles parser + lexer together
- *   4. ./7                    # Run executable
- *
- * ONE-LINER:
- *   yacc -d 7.y && lex 7.l && gcc y.tab.c lex.yy.c -o 7 && ./7
+ * COMPILATION STEPS:
+ *   1. yacc -d 7.y            
+ *   2. lex 7.l                
+ *   3. gcc y.tab.c lex.yy.c -o 7   
+ *   4. ./7                   
  *
  * HOW TO TEST:
  *   $ ./7
@@ -57,7 +50,7 @@ extern int yylval;
 #include <stdio.h>
 #include <stdlib.h>
 int yylex();
-int yyerror();
+int yyerror(const char *s);
 %}
 
 %token NUMBER
@@ -85,7 +78,7 @@ int main() {
     return 0;
 }
 
-int yyerror() {
+int yyerror(const char *s) {
     printf("Invalid Expression\n");
     exit(1);
 }
