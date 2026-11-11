@@ -1,48 +1,43 @@
 ===============================================================================
- XM - C Programming Laboratory Source Code Distributor (CLI / Terminal)
+ XM - Compiler Design Lab Programs (Lex, Yacc, & GCC)
 ===============================================================================
 
 Hosted at: https://mohdsahlpa.github.io/xm
 
+PREREQUISITES ON UBUNTU / DEBIAN:
+  sudo apt update && sudo apt install -y flex bison gcc
+
 USAGE:
   curl -sL https://mohdsahlpa.github.io/xm/<id>
-  curl -sL https://mohdsahlpa.github.io/xm/<id>.c
   wget -qO- https://mohdsahlpa.github.io/xm/<id>
 
 AVAILABLE PROGRAMS:
   -----------------------------------------------------------------------------
-  ID   ENDPOINT           NAME / TOPIC
+  ID   TYPE        DESCRIPTION / TOPIC
   -----------------------------------------------------------------------------
-  1    /1  or  /1.c       Hello World & Basic Arithmetic Operations
-  2    /2  or  /2.c       Bubble Sort Algorithm (Array sorting in ascending order)
-  3    /3  or  /3.c       Singly Linked List (Allocation, insertion, traversal)
+  1    Lex         Lexical Analyzer (Keywords, Identifiers, Operators, etc.)
+  2    Lex         Word, Line, and Character Count (wc simulation)
+  3    Lex         Replace Substring "abc" with "ABC" (Terminates on Tab)
+  4    Lex         Count Number of Vowels and Consonants
+  5    Lex + Yacc  Validate Arithmetic Expression Syntax
+  6    Lex + Yacc  Valid Variable / Identifier Recognition
+  7    Lex + Yacc  Arithmetic Calculator & Expression Evaluator
 
-EXAMPLES:
-  # View C code directly in your terminal:
-  curl -sL https://mohdsahlpa.github.io/xm/1
+COMPILATION CHEAT SHEET:
+  -----------------------------------------------------------------------------
+  For Lex Programs (1, 2, 3, 4):
+    $ lex <id>.l && gcc lex.yy.c -o <id> && ./<id>
 
-  # Save directly to a local C file:
-  curl -sL https://mohdsahlpa.github.io/xm/2.c -o bubble_sort.c
+  For Lex + Yacc Programs (5, 6, 7):
+    (Separate into <id>.l and <id>.y as commented inside each file)
+    $ yacc -d <id>.y && lex <id>.l && gcc y.tab.c lex.yy.c -o <id> && ./<id>
 
-  # Fetch, compile, and run on-the-fly with GCC:
-  curl -sL https://mohdsahlpa.github.io/xm/1 | gcc -x c - -o app && ./app
-
-  # View using wget:
-  wget -qO- https://mohdsahlpa.github.io/xm/3
-
-TERMINAL ALIAS (Recommended):
-  Add this 1-line helper function to your ~/.bashrc or ~/.zshrc:
+TERMINAL HELPER ALIAS:
+  Add to ~/.bashrc or ~/.zshrc:
     xm() { curl -sL "https://mohdsahlpa.github.io/xm/${1:-}"; }
 
-  Then in any terminal simply run:
-    xm          # Displays this help syntax and available programs
-    xm 1        # Outputs C program 1
-    xm 2        # Outputs C program 2
-    xm 3 > list.c # Downloads program 3 to list.c
-
-STATIC HOSTING & QUERY PARAMETERS (?id=...):
-  GitHub Pages is a static CDN without a backend server. Static web servers
-  ignore query parameters (?id=...) when resolving files, and CLI tools like
-  curl/wget do not execute browser JavaScript. Therefore, direct path endpoints
-  (/1, /1.c, /2, /2.c) provide instant, reliable plain text responses.
+  Usage:
+    $ xm            # View this program list & compilation guide
+    $ xm 1 > 1.l    # Fetch Program 1 into 1.l
+    $ xm 7          # Display Program 7 in terminal
 ===============================================================================

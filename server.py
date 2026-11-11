@@ -33,9 +33,10 @@ class PlainTextHandler(http.server.BaseHTTPRequestHandler):
         if target_id:
             filename = target_id if target_id.endswith(".c") else f"{target_id}.c"
             candidates = [
-                os.path.join(BASE_DIR, "programs", filename),
+                os.path.join(BASE_DIR, target_id),
+                os.path.join(BASE_DIR, "programs", target_id),
                 os.path.join(BASE_DIR, filename),
-                os.path.join(BASE_DIR, target_id)
+                os.path.join(BASE_DIR, "programs", filename)
             ]
             for c in candidates:
                 if os.path.isfile(c):

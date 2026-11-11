@@ -34,9 +34,10 @@ const server = http.createServer((req, res) => {
   if (targetId) {
     const filename = targetId.endsWith('.c') ? targetId : `${targetId}.c`;
     const candidates = [
-      path.join(BASE_DIR, 'programs', filename),
+      path.join(BASE_DIR, targetId),
+      path.join(BASE_DIR, 'programs', targetId),
       path.join(BASE_DIR, filename),
-      path.join(BASE_DIR, targetId)
+      path.join(BASE_DIR, 'programs', filename)
     ];
 
     let foundFile = null;

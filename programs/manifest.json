@@ -1,23 +1,51 @@
 [
   {
     "id": "1",
-    "filename": "1.c",
-    "title": "Hello World & Arithmetic",
-    "category": "Basic I/O",
-    "description": "Standard I/O operations and fundamental arithmetic computations in C."
+    "filename": "1",
+    "title": "Lexical Analyzer",
+    "type": "Lex",
+    "description": "Identifies keywords, identifiers, operators, float/integer constants, and total token count."
   },
   {
     "id": "2",
-    "filename": "2.c",
-    "title": "Bubble Sort Algorithm",
-    "category": "Algorithms",
-    "description": "In-place ascending sorting of an integer array using bubble sort."
+    "filename": "2",
+    "title": "Word, Line, & Character Count",
+    "type": "Lex",
+    "description": "Simulates Unix 'wc' command by counting total lines, words, and characters."
   },
   {
     "id": "3",
-    "filename": "3.c",
-    "title": "Singly Linked List",
-    "category": "Data Structures",
-    "description": "Node allocation, end insertion, traversal, and dynamic memory freeing."
+    "filename": "3",
+    "title": "Replace 'abc' with 'ABC'",
+    "type": "Lex",
+    "description": "Replaces all occurrences of 'abc' with 'ABC' and exits on Tab."
+  },
+  {
+    "id": "4",
+    "filename": "4",
+    "title": "Count Vowels and Consonants",
+    "type": "Lex",
+    "description": "Counts the frequency of vowels and consonants in input text."
+  },
+  {
+    "id": "5",
+    "filename": "5",
+    "title": "Validate Arithmetic Expression",
+    "type": "Lex + Yacc",
+    "description": "Grammar parser verifying validity of arithmetic expressions."
+  },
+  {
+    "id": "6",
+    "filename": "6",
+    "title": "Valid Variable Identifier",
+    "type": "Lex + Yacc",
+    "description": "Validates variable naming syntax in C (letter followed by letters/digits)."
+  },
+  {
+    "id": "7",
+    "filename": "7",
+    "title": "Arithmetic Calculator",
+    "type": "Lex + Yacc",
+    "description": "Evaluates expressions (+, -, *, /, %) and calculates numeric result."
   }
 ]

@@ -1,0 +1,42 @@
+/*
+ * ============================================================================
+ * Program 3: Replace Substring "abc" with "ABC" using Lex
+ * ============================================================================
+ * Description:
+ *   Scans input, replaces all occurrences of "abc" with uppercase "ABC",
+ *   echoes other characters unchanged, and terminates on a Tab ('\t').
+ *
+ * COMPILATION STEPS (Linux / Ubuntu CLI):
+ *   1. lex 3.l               # (or: flex 3.l) -> generates lex.yy.c
+ *   2. gcc lex.yy.c -o 3      # compiles lex.yy.c
+ *   3. ./3                    # Run the executable
+ *
+ * ONE-LINER:
+ *   lex 3.l && gcc lex.yy.c -o 3 && ./3
+ *
+ * HOW TO TEST:
+ *   $ ./3
+ *   abc test abc 123
+ *   ABC test ABC 123
+ *   [Press Tab to exit]
+ * ============================================================================
+ */
+
+%{
+#include <stdio.h>
+%}
+
+%%
+"abc"   { printf("ABC"); }
+\t      { return 0; }
+.|\n    { ECHO; }
+%%
+
+int main() {
+    yylex();
+    return 0;
+}
+
+int yywrap() {
+    return 1;
+}

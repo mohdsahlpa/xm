@@ -1,23 +1,48 @@
-#include <stdio.h>
-
-/**
- * Program 1: Hello World & Basic Arithmetic
- * Description: Demonstrates standard I/O and basic calculations in C.
+/*
+ * ============================================================================
+ * Program 1: Lexical Analyzer using Lex
+ * ============================================================================
+ * Description:
+ *   Identifies and classifies input tokens into Keywords, Identifiers,
+ *   Operators, Separators, Float numbers, and Integers. Counts total tokens.
+ *
+ * COMPILATION STEPS (Linux / Ubuntu CLI):
+ *   1. lex 1.l               # (or: flex 1.l) -> generates lex.yy.c
+ *   2. gcc lex.yy.c -o 1      # (or: gcc lex.yy.c -lfl -o 1)
+ *   3. ./1                    # Run the executable
+ *
+ * ONE-LINER:
+ *   lex 1.l && gcc lex.yy.c -o 1 && ./1
+ *
+ * HOW TO TEST:
+ *   $ ./1
+ *   int a = 10;
+ *   while (a <= 20) a++;
+ *   [Press Ctrl+D to trigger EOF]
+ * ============================================================================
  */
 
-int main(void) {
-    printf("========================================\n");
-    printf("   Welcome to C Programming Laboratory  \n");
-    printf("========================================\n\n");
+%{
+#include <stdio.h>
+int n = 0;
+%}
 
-    int a = 25, b = 15;
-    printf("Values: a = %d, b = %d\n", a, b);
-    printf("Addition:       %d + %d = %d\n", a, b, a + b);
-    printf("Subtraction:    %d - %d = %d\n", a, b, a - b);
-    printf("Multiplication: %d * %d = %d\n", a, b, a * b);
-    printf("Division:       %d / %d = %d\n", a, b, a / b);
-    printf("Modulus:        %d %% %d = %d\n\n", a, b, a % b);
+%option noyywrap
 
-    printf("Program completed successfully.\n");
+%%
+[ \t\n]+                            {}
+"while"|"if"|"else"|"char"|"void"   { n++; printf("\tKeywords:%s\n", yytext); }
+"int"|"float"                       { n++; printf("\tKeyword:%s\n", yytext); }
+[a-zA-Z_][a-zA-Z0-9_]*              { n++; printf("\tidentifier:%s\n", yytext); }
+"<="|"=="|"="|"++"|"-"|"+"|"*"      { n++; printf("\toperator:%s\n", yytext); }
+[(){},;]                            { n++; printf("\tseperator:%s\n", yytext); }
+[0-9]+\.[0-9]+                      { n++; printf("\tfloat:%s\n", yytext); }
+[0-9]+                              { n++; printf("\tinteger:%s\n", yytext); }
+.                                   {}
+%%
+
+int main() {
+    yylex();
+    printf("\n Total number of tokens=%d\n", n);
     return 0;
 }

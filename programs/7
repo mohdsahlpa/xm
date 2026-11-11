@@ -1,0 +1,91 @@
+/*
+ * ============================================================================
+ * Program 7: Arithmetic Calculator using Lex & Yacc
+ * ============================================================================
+ * Description:
+ *   Evaluates arithmetic expressions with addition (+), subtraction (-),
+ *   multiplication (*), division (/), modulo (%), and parentheses.
+ *   Calculates the integer result using semantic actions in Yacc.
+ *
+ * NOTE: This file contains BOTH Lex and Yacc specifications.
+ * To compile on Linux / Ubuntu, save the respective sections into two files:
+ *   - Section 1 below -> save as '7.l'
+ *   - Section 2 below -> save as '7.y'
+ *
+ * COMPILATION STEPS (Linux / Ubuntu CLI):
+ *   1. yacc -d 7.y            # (or: bison -d 7.y) -> generates y.tab.c & y.tab.h
+ *   2. lex 7.l                # (or: flex 7.l)     -> generates lex.yy.c
+ *   3. gcc y.tab.c lex.yy.c -o 7   # compiles parser + lexer together
+ *   4. ./7                    # Run executable
+ *
+ * ONE-LINER:
+ *   yacc -d 7.y && lex 7.l && gcc y.tab.c lex.yy.c -o 7 && ./7
+ *
+ * HOW TO TEST:
+ *   $ ./7
+ *   Enter arithmetic expression: 10 + 20 * 3
+ *   Result = 70
+ *   Valid Expression
+ *
+ *   $ ./7
+ *   Enter arithmetic expression: (10 + 20) * 3
+ *   Result = 90
+ *   Valid Expression
+ * ============================================================================
+ */
+
+/* ==================== SECTION 1: LEX SPECIFICATION (7.l) ==================== */
+
+%{
+#include <stdlib.h>
+#include "y.tab.h"
+extern int yylval;
+%}
+
+%option noyywrap
+
+%%
+[0-9]+    { yylval = atoi(yytext); return NUMBER; }
+[ \t]+    { /* Ignore spaces */ }
+\n        { return 0; }
+.         { return yytext[0]; }
+%%
+
+/* ==================== SECTION 2: YACC SPECIFICATION (7.y) ==================== */
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+int yylex();
+int yyerror();
+%}
+
+%token NUMBER
+%left '+' '-'
+%left '*' '/' '%'
+
+%%
+expr: E { printf("Result = %d\n", $1); return 0; }
+    ;
+
+E: E '+' E   { $$ = $1 + $3; }
+ | E '-' E   { $$ = $1 - $3; }
+ | E '*' E   { $$ = $1 * $3; }
+ | E '/' E   { $$ = $1 / $3; }
+ | E '%' E   { $$ = $1 % $3; }
+ | '(' E ')' { $$ = $2; }
+ | NUMBER    { $$ = $1; }
+ ;
+%%
+
+int main() {
+    printf("Enter arithmetic expression: ");
+    yyparse();
+    printf("Valid Expression\n");
+    return 0;
+}
+
+int yyerror() {
+    printf("Invalid Expression\n");
+    exit(1);
+}

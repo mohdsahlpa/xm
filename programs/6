@@ -1,0 +1,78 @@
+/*
+ * ============================================================================
+ * Program 6: Valid Variable Name (Identifier) Recognition using Lex & Yacc
+ * ============================================================================
+ * Description:
+ *   Validates whether a given variable name is syntactically valid.
+ *   Rule: Must start with a letter (ALPHA), followed by letters or digits.
+ *
+ * NOTE: This file contains BOTH Lex and Yacc specifications.
+ * To compile on Linux / Ubuntu, save the respective sections into two files:
+ *   - Section 1 below -> save as '6.l'
+ *   - Section 2 below -> save as '6.y'
+ *
+ * COMPILATION STEPS (Linux / Ubuntu CLI):
+ *   1. yacc -d 6.y            # (or: bison -d 6.y) -> generates y.tab.c & y.tab.h
+ *   2. lex 6.l                # (or: flex 6.l)     -> generates lex.yy.c
+ *   3. gcc y.tab.c lex.yy.c -o 6   # compiles parser + lexer together
+ *   4. ./6                    # Run executable
+ *
+ * ONE-LINER:
+ *   yacc -d 6.y && lex 6.l && gcc y.tab.c lex.yy.c -o 6 && ./6
+ *
+ * HOW TO TEST:
+ *   $ ./6
+ *   Enter variable name: totalSum_1
+ *   Valid variable
+ *
+ *   $ ./6
+ *   Enter variable name: 9count
+ *   Invalid variable
+ * ============================================================================
+ */
+
+/* ==================== SECTION 1: LEX SPECIFICATION (6.l) ==================== */
+
+%{
+#include "y.tab.h"
+%}
+
+%option noyywrap
+
+%%
+[ \t]+      { /* Ignore spaces and tabs */ }
+[a-zA-Z]    { return ALPHA; }
+[0-9]       { return DIGIT; }
+\n          { return 0; }
+.           { return yytext[0]; }
+%%
+
+/* ==================== SECTION 2: YACC SPECIFICATION (6.y) ==================== */
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+int yylex();
+int yyerror(const char *s);
+%}
+
+%token DIGIT ALPHA
+
+%%
+var: ALPHA
+   | var ALPHA
+   | var DIGIT
+   ;
+%%
+
+int main() {
+    printf("Enter variable name: ");
+    yyparse();
+    printf("Valid variable\n");
+    return 0;
+}
+
+int yyerror(const char *s) {
+    printf("Invalid variable\n");
+    exit(1);
+}

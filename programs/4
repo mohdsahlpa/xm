@@ -1,0 +1,41 @@
+/*
+ * ============================================================================
+ * Program 4: Count Number of Vowels and Consonants using Lex
+ * ============================================================================
+ * Description:
+ *   Counts vowels (a, e, i, o, u) and consonants in input text, ignoring
+ *   spaces, punctuation, digits, and newlines.
+ *
+ * COMPILATION STEPS (Linux / Ubuntu CLI):
+ *   1. lex 4.l               # (or: flex 4.l) -> generates lex.yy.c
+ *   2. gcc lex.yy.c -o 4      # (or: gcc lex.yy.c -lfl -o 4)
+ *   3. ./4                    # Run the executable
+ *
+ * ONE-LINER:
+ *   lex 4.l && gcc lex.yy.c -o 4 && ./4
+ *
+ * HOW TO TEST:
+ *   $ ./4
+ *   Engineering
+ *   [Press Ctrl+D to trigger EOF]
+ *   Output: Vowels: 5 | Consonants: 6
+ * ============================================================================
+ */
+
+%{
+int vowels = 0, consonants = 0;
+%}
+
+%option noyywrap
+
+%%
+[aeiouAEIOU]    { vowels++; }
+[a-zA-Z]        { consonants++; }
+.|\n            { /* Ignore spaces, punctuation, and newlines */ }
+%%
+
+int main() {
+    yylex();
+    printf("Vowels: %d | Consonants: %d\n", vowels, consonants);
+    return 0;
+}

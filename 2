@@ -1,40 +1,45 @@
-#include <stdio.h>
-
-/**
- * Program 2: Bubble Sort Algorithm
- * Description: Sorts an array of integers in ascending order.
+/*
+ * ============================================================================
+ * Program 2: Word, Line, and Character Count using Lex
+ * ============================================================================
+ * Description:
+ *   Simulates the Unix 'wc' command by counting total lines (lc), words (wc),
+ *   and characters (cc) in the input stream.
+ *
+ * COMPILATION STEPS (Linux / Ubuntu CLI):
+ *   1. lex 2.l               # (or: flex 2.l) -> generates lex.yy.c
+ *   2. gcc lex.yy.c -o 2      # compiles lex.yy.c
+ *   3. ./2                    # Run the executable
+ *
+ * ONE-LINER:
+ *   lex 2.l && gcc lex.yy.c -o 2 && ./2
+ *
+ * HOW TO TEST:
+ *   $ ./2
+ *   Hello world
+ *   Compiler design lab
+ *   [Press Ctrl+D to trigger EOF]
+ *   Output: Lines: 2 | Words: 5 | Characters: 32
+ * ============================================================================
  */
 
-void bubbleSort(int arr[], int n) {
-    int i, j, temp;
-    for (i = 0; i < n - 1; i++) {
-        for (j = 0; j < n - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-            }
-        }
-    }
-}
+%{
+#include<stdio.h>
+int lc=0, wc=0, cc=0;
+%}
 
-void printArray(const char *label, int arr[], int n) {
-    printf("%s: [", label);
-    for (int i = 0; i < n; i++) {
-        printf("%d%s", arr[i], (i == n - 1) ? "" : ", ");
-    }
-    printf("]\n");
-}
+%%
+\n          { lc++; cc++; }
+[^ \t\n]+   { wc++; cc += yyleng; }
+.           { cc++; }
+%%
 
-int main(void) {
-    int numbers[] = {64, 34, 25, 12, 22, 11, 90, 88, 45, 2};
-    int n = sizeof(numbers) / sizeof(numbers[0]);
-
-    printf("=== Bubble Sort in C ===\n\n");
-    printArray("Initial array", numbers, n);
-
-    bubbleSort(numbers, n);
-
-    printArray("Sorted array ", numbers, n);
+int main() {
+    yylex();
+    printf("Lines: %d | Words: %d | Characters: %d\n", lc, wc, cc);
     return 0;
+}
+
+int yywrap() { 
+    return 1; 
 }

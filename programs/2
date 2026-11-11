@@ -1,0 +1,45 @@
+/*
+ * ============================================================================
+ * Program 2: Word, Line, and Character Count using Lex
+ * ============================================================================
+ * Description:
+ *   Simulates the Unix 'wc' command by counting total lines (lc), words (wc),
+ *   and characters (cc) in the input stream.
+ *
+ * COMPILATION STEPS (Linux / Ubuntu CLI):
+ *   1. lex 2.l               # (or: flex 2.l) -> generates lex.yy.c
+ *   2. gcc lex.yy.c -o 2      # compiles lex.yy.c
+ *   3. ./2                    # Run the executable
+ *
+ * ONE-LINER:
+ *   lex 2.l && gcc lex.yy.c -o 2 && ./2
+ *
+ * HOW TO TEST:
+ *   $ ./2
+ *   Hello world
+ *   Compiler design lab
+ *   [Press Ctrl+D to trigger EOF]
+ *   Output: Lines: 2 | Words: 5 | Characters: 32
+ * ============================================================================
+ */
+
+%{
+#include<stdio.h>
+int lc=0, wc=0, cc=0;
+%}
+
+%%
+\n          { lc++; cc++; }
+[^ \t\n]+   { wc++; cc += yyleng; }
+.           { cc++; }
+%%
+
+int main() {
+    yylex();
+    printf("Lines: %d | Words: %d | Characters: %d\n", lc, wc, cc);
+    return 0;
+}
+
+int yywrap() { 
+    return 1; 
+}

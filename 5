@@ -1,0 +1,84 @@
+/*
+ * ============================================================================
+ * Program 5: Validate Arithmetic Expression using Lex & Yacc
+ * ============================================================================
+ * Description:
+ *   Validates if an arithmetic expression containing identifiers, numbers,
+ *   parentheses, and operators (+, -, *, /) follows valid grammar syntax.
+ *
+ * NOTE: This file contains BOTH Lex and Yacc specifications.
+ * To compile on Linux / Ubuntu, save the respective sections into two files:
+ *   - Section 1 below -> save as '5.l'
+ *   - Section 2 below -> save as '5.y'
+ *
+ * COMPILATION STEPS (Linux / Ubuntu CLI):
+ *   1. yacc -d 5.y            # (or: bison -d 5.y) -> generates y.tab.c & y.tab.h
+ *   2. lex 5.l                # (or: flex 5.l)     -> generates lex.yy.c
+ *   3. gcc y.tab.c lex.yy.c -o 5   # compiles parser + lexer together
+ *   4. ./5                    # Run executable
+ *
+ * ONE-LINER:
+ *   yacc -d 5.y && lex 5.l && gcc y.tab.c lex.yy.c -o 5 && ./5
+ *
+ * HOW TO TEST:
+ *   $ ./5
+ *   Enter expression: (a+b)*c
+ *   Valid expression
+ *
+ *   $ ./5
+ *   Enter expression: a+*b
+ *   Invalid expression
+ * ============================================================================
+ */
+
+/* ==================== SECTION 1: LEX SPECIFICATION (5.l) ==================== */
+
+%{
+#include "y.tab.h"
+%}
+
+%option noyywrap
+
+%%
+[ \t]+                  { /* Ignore spaces and tabs */ }
+[0-9]+                  { return NUMBER; }
+[a-zA-Z][a-zA-Z0-9]*    { return ID; }
+\n                      { return 0; }
+.                       { return yytext[0]; }
+%%
+
+/* ==================== SECTION 2: YACC SPECIFICATION (5.y) ==================== */
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+int yylex();
+int yyerror(const char *s);
+%}
+
+%token NUMBER ID
+%left '+' '-'
+%left '*' '/'
+
+%%
+exp: exp '+' exp
+   | exp '-' exp
+   | exp '*' exp
+   | exp '/' exp
+   | '(' exp ')'
+   | NUMBER
+   | ID
+   ;
+%%
+
+int main() {
+    printf("Enter expression: ");
+    yyparse();
+    printf("Valid expression\n");
+    return 0;
+}
+
+int yyerror(const char *s) {
+    printf("Invalid expression\n");
+    exit(1);
+}
