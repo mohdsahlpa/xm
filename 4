@@ -10,8 +10,7 @@
  *
  * HOW TO TEST:
  *   $ ./4
- *   Engineering
- *   [Press Ctrl+D to trigger EOF]
+ *   Enter a word: Engineering
  *   Output: Vowels: 5 | Consonants: 6
  * ============================================================================
  */
@@ -26,10 +25,12 @@ int vowels = 0, consonants = 0;
 %%
 [aeiouAEIOU]    { vowels++; }
 [a-zA-Z]        { consonants++; }
-.|\n            { /* Ignore spaces, punctuation, and newlines */ }
+\n              { return 0; }
+.               { /* Ignore spaces, digits, and punctuation */ }
 %%
 
 int main() {
+    printf("Enter a word: ");
     yylex();
     printf("Vowels: %d | Consonants: %d\n", vowels, consonants);
     return 0;
