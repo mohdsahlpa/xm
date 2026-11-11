@@ -1,12 +1,89 @@
-# XM - Serverless C Program Repository
+# XM - Terminal & CLI C Program Distributor (Pure Plain Text)
 
-A lightweight, zero-backend web application designed for **GitHub Pages** (`https://mohdsahlpa.github.io/xm`).
+Strictly **zero HTML**. Designed 100% for command-line access via **`curl`** and **`wget`**, returning pure plain text on every single request.
 
-When hosted on GitHub Pages:
-- Visiting **`mohdsahlpa.github.io/xm?id=1`** loads and displays the plain text C code for Program 1 (`programs/1.c`).
-- Visiting **`mohdsahlpa.github.io/xm?id=1&raw=1`** renders pure text with zero UI wrappers (ideal for curl, scripts, or raw reading).
-- Visiting **`mohdsahlpa.github.io/xm`** presents an interactive directory with live search, copy-to-clipboard, download buttons, and quick test inputs.
-- Direct static file URLs like **`mohdsahlpa.github.io/xm/programs/1.c`** work natively with `curl` or `wget`.
+---
+
+## ⚡ Quick Start for Terminal Users
+
+### 1. View Root Syntax & Available Programs
+```bash
+curl -sL https://mohdsahlpa.github.io/xm
+```
+*(or with wget)*:
+```bash
+wget -qO- https://mohdsahlpa.github.io/xm
+```
+
+Output:
+```text
+===============================================================================
+ XM - C Programming Laboratory Source Code Distributor (CLI / Terminal)
+===============================================================================
+
+USAGE:
+  curl -sL https://mohdsahlpa.github.io/xm/<id>
+  curl -sL https://mohdsahlpa.github.io/xm/<id>.c
+  wget -qO- https://mohdsahlpa.github.io/xm/<id>
+...
+```
+
+---
+
+### 2. Retrieve C Program Source Code
+
+```bash
+# Retrieve Program 1 (Hello World & Arithmetic)
+curl -sL https://mohdsahlpa.github.io/xm/1
+
+# Retrieve Program 2 (Bubble Sort) and save to file
+curl -sL https://mohdsahlpa.github.io/xm/2.c -o bubble_sort.c
+
+# Retrieve Program 3 (Linked List)
+curl -sL https://mohdsahlpa.github.io/xm/3
+```
+
+---
+
+### 3. Direct Compile & Run On-the-Fly (No local file needed)
+
+You can stream any C program directly into `gcc` via pipe:
+
+```bash
+curl -sL https://mohdsahlpa.github.io/xm/1 | gcc -x c - -o prog && ./prog
+```
+
+---
+
+### 4. Recommended Terminal Alias (`xm`)
+
+Add this single line to your `~/.bashrc` or `~/.zshrc`:
+
+```bash
+xm() { curl -sL "https://mohdsahlpa.github.io/xm/${1:-}"; }
+```
+
+Reload terminal (`source ~/.bashrc`), then use:
+- `xm` &rarr; Shows syntax and all available programs.
+- `xm 1` &rarr; Prints C program 1.
+- `xm 2 > sort.c` &rarr; Saves program 2 into `sort.c`.
+- `xm 1 | gcc -x c - && ./a.out` &rarr; Compiles and runs in 1 step!
+
+---
+
+## 🔍 Static GitHub Pages vs Query Parameters (`?id=...`)
+
+1. **How GitHub Pages Static CDN Works**:
+   - GitHub Pages is a static file host (no server-side Node/PHP/Python execution).
+   - CLI tools like `curl` and `wget` do **not** run browser JavaScript engines.
+   - When `curl` requests a query string like `?id=1` on a static CDN, the CDN ignores the query string and serves the root file (`index.html`).
+   - Therefore, on GitHub Pages, the direct clean endpoints (`/1`, `/1.c`, `/2`, `/2.c`) give you instant, reliable plain-text responses without any server overhead.
+
+2. **Full Query Parameter Support (`?id=1`)**:
+   - If you run the included zero-dependency server (`npm start` or `python server.py`), it automatically supports both:
+     - `curl "http://localhost:3000/?id=1"`
+     - `curl "http://localhost:3000/1"`
+     - `curl "http://localhost:3000/1.c"`
 
 ---
 
@@ -14,104 +91,57 @@ When hosted on GitHub Pages:
 
 ```text
 xm/
-├── index.html            # Core application (SPA router, plain text viewer, directory)
-├── 404.html              # GitHub Pages fallback redirect handler
-├── package.json          # Local development scripts
-├── .gitignore            # Git ignore file
-├── programs/             # C program files directory
-│   ├── 1.c               # Program 1 (Hello World & Arithmetic)
-│   ├── 2.c               # Program 2 (Bubble Sort Algorithm)
-│   ├── 3.c               # Program 3 (Singly Linked List)
-│   └── manifest.json     # Metadata catalog for dashboard index
+├── index.html            # Root plain-text syntax guide (0 HTML tags)
+├── 404.html              # Plain-text error response
+├── .nojekyll             # Ensures GitHub Pages serves all raw & extensionless files
+├── 1                     # Extensionless text endpoint for Program 1
+├── 1.c                   # C source file for Program 1
+├── 2                     # Extensionless text endpoint for Program 2
+├── 2.c                   # C source file for Program 2
+├── 3                     # Extensionless text endpoint for Program 3
+├── 3.c                   # C source file for Program 3
+├── server.js             # Zero-dependency local Node server (supports ?id=1 and /1)
+├── server.py             # Zero-dependency local Python server
+├── package.json          # CLI dev scripts (npm start)
+├── programs/             # Program directory archive
+│   ├── 1.c
+│   ├── 2.c
+│   ├── 3.c
+│   └── manifest.json
 └── .github/
     └── workflows/
-        └── deploy.yml    # Optional GitHub Actions deployment workflow
+        └── deploy.yml    # GitHub Pages deployment workflow
 ```
-
----
-
-## ⚡ How It Works (Without a Backend Server)
-
-1. **Client-side Query Routing**:
-   GitHub Pages serves `index.html` as a static file. When someone accesses `mohdsahlpa.github.io/xm?id=1`, JavaScript extracts `id=1` from `window.location.search`.
-2. **File Fetching**:
-   The application fetches `./programs/1.c` using standard browser `fetch()`. The path resolver automatically accounts for GitHub Pages repository subdirectory paths (`/xm/`).
-3. **Instant Display & Plain Text Mode**:
-   The C code is displayed in a monospace, high-contrast viewer with a 1-click **Copy Code** button. For automated tools or pure text view, `?id=1&raw=1` renders purely the raw text in the DOM.
 
 ---
 
 ## ➕ Adding New C Programs
 
-Adding a new C program takes 2 seconds:
-
-1. Create a new file in `programs/` named `<id>.c` (e.g. `programs/4.c` or `programs/binary_search.c`).
-2. Write your C code in that file.
-3. Commit and push to GitHub:
+1. Add your program to the repository as `<id>` and `<id>.c`:
    ```bash
-   git add programs/4.c
+   cp my_code.c 4.c
+   cp my_code.c 4
+   ```
+2. (Optional) Add `4` to `programs/` as well.
+3. Commit and push:
+   ```bash
+   git add .
    git commit -m "Add program 4"
    git push
    ```
-4. It is **immediately accessible** at:
-   - `https://mohdsahlpa.github.io/xm?id=4`
-   - `https://mohdsahlpa.github.io/xm/programs/4.c`
-
-*(Optional)* You can also add an entry to `programs/manifest.json` if you want it to appear with a custom title and category on the main directory page.
+4. It is immediately available:
+   ```bash
+   curl -sL https://mohdsahlpa.github.io/xm/4
+   ```
 
 ---
 
 ## 🚀 Deploying to GitHub Pages
 
-Follow these simple steps to deploy:
-
-### Step 1: Initialize Git and Push to GitHub
-
-In your terminal (inside the `xm` folder):
-
-```bash
-git init
-git add .
-git commit -m "Initial commit of XM application"
-git branch -M main
-git remote add origin https://github.com/mohdsahlpa/xm.git
-git push -u origin main
-```
-
-*(Ensure the repository on GitHub is named `xm` and set to Public).*
-
-### Step 2: Enable GitHub Pages
-
-1. Open your repository on GitHub: `https://github.com/mohdsahlpa/xm`
-2. Go to **Settings** → **Pages** (under the "Code and automation" sidebar section).
-3. Under **Build and deployment**:
-   - **Source**: Select `Deploy from a branch`
-   - **Branch**: Select `main` / `/ (root)`
-   - Click **Save**.
-4. GitHub Pages will publish the site in 1-2 minutes at:
-   **`https://mohdsahlpa.github.io/xm`**
-
----
-
-## 🧪 Testing Locally
-
-To test locally on your computer:
-
-### Option A: Using Node.js
-```bash
-npm start
-```
-or:
-```bash
-npx serve . -p 3000
-```
-Then open:
-- `http://localhost:3000/?id=1`
-- `http://localhost:3000/?id=2`
-- `http://localhost:3000/`
-
-### Option B: Using Python
-```bash
-python -m http.server 3000
-```
-Then open `http://localhost:3000/?id=1` in your browser.
+1. Push to your repository:
+   ```bash
+   git add .
+   git commit -m "Deploy pure plain text CLI application"
+   git push origin main
+   ```
+2. On GitHub: **Settings** &rarr; **Pages** &rarr; Source: `Deploy from a branch` &rarr; Branch: `main` / `root`.

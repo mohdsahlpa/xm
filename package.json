@@ -1,17 +1,22 @@
 {
   "name": "xm",
   "version": "1.0.0",
-  "description": "Serverless C source code repository hosted on GitHub Pages",
+  "description": "Terminal & CLI-friendly C source code distributor (pure plain text, zero HTML)",
+  "main": "server.js",
   "scripts": {
-    "start": "npx serve . -p 3000",
-    "serve:python": "python -m http.server 3000",
-    "test": "node -e \"console.log('App is fully static, no build step required!')\""
+    "start": "node server.js",
+    "serve": "node server.js",
+    "serve:python": "python server.py",
+    "test": "node -e \"console.log('App is fully static & CLI ready!')\""
   },
   "keywords": [
     "c",
+    "cli",
+    "curl",
+    "wget",
+    "terminal",
     "github-pages",
-    "static-site",
-    "serverless"
+    "plain-text"
   ],
   "author": "mohdsahlpa",
   "license": "MIT"
