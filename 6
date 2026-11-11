@@ -2,23 +2,16 @@
  * ============================================================================
  * Program 6: Valid Variable Name (Identifier) Recognition using Lex & Yacc
  * ============================================================================
- * Description:
- *   Validates whether a given variable name is syntactically valid.
- *   Rule: Must start with a letter (ALPHA), followed by letters or digits.
- *
  * NOTE: This file contains BOTH Lex and Yacc specifications.
  * To compile on Linux / Ubuntu, save the respective sections into two files:
  *   - Section 1 below -> save as '6.l'
  *   - Section 2 below -> save as '6.y'
  *
- * COMPILATION STEPS (Linux / Ubuntu CLI):
- *   1. yacc -d 6.y            # (or: bison -d 6.y) -> generates y.tab.c & y.tab.h
- *   2. lex 6.l                # (or: flex 6.l)     -> generates lex.yy.c
- *   3. gcc y.tab.c lex.yy.c -o 6   # compiles parser + lexer together
- *   4. ./6                    # Run executable
- *
- * ONE-LINER:
- *   yacc -d 6.y && lex 6.l && gcc y.tab.c lex.yy.c -o 6 && ./6
+ * COMPILATION STEPS:
+ *   1. yacc -d 6.y           
+ *   2. lex 6.l               
+ *   3. gcc y.tab.c lex.yy.c -o 6 -ll 
+ *   4. ./6                    
  *
  * HOW TO TEST:
  *   $ ./6

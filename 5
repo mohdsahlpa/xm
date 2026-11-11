@@ -2,23 +2,15 @@
  * ============================================================================
  * Program 5: Validate Arithmetic Expression using Lex & Yacc
  * ============================================================================
- * Description:
- *   Validates if an arithmetic expression containing identifiers, numbers,
- *   parentheses, and operators (+, -, *, /) follows valid grammar syntax.
- *
- * NOTE: This file contains BOTH Lex and Yacc specifications.
- * To compile on Linux / Ubuntu, save the respective sections into two files:
+ * To compile:
  *   - Section 1 below -> save as '5.l'
  *   - Section 2 below -> save as '5.y'
  *
- * COMPILATION STEPS (Linux / Ubuntu CLI):
- *   1. yacc -d 5.y            # (or: bison -d 5.y) -> generates y.tab.c & y.tab.h
- *   2. lex 5.l                # (or: flex 5.l)     -> generates lex.yy.c
- *   3. gcc y.tab.c lex.yy.c -o 5   # compiles parser + lexer together
- *   4. ./5                    # Run executable
- *
- * ONE-LINER:
- *   yacc -d 5.y && lex 5.l && gcc y.tab.c lex.yy.c -o 5 && ./5
+ * COMPILATION STEPS:
+ *   1. yacc -d 5.y            
+ *   2. lex 5.l                
+ *   3. gcc y.tab.c lex.yy.c -o 5 -ll
+ *   4. ./5                    
  *
  * HOW TO TEST:
  *   $ ./5
