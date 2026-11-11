@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XM - C Programs Repository</title>
+  <meta name="description" content="Serverless C program repository hosted on GitHub Pages">
+  <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --border-color: #30363d;
+      --text-primary: #c9d1d9;
+      --text-secondary: #8b949e;
+      --text-highlight: #58a6ff;
+      --accent-color: #238636;
+      --accent-hover: #2ea043;
+      --accent-code: #79c0ff;
+      --danger-color: #f85149;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Common Button & Link Styles */
+    a {
+      color: var(--text-highlight);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn:hover {
+      background-color: #30363d;
+      border-color: #8b949e;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background-color: var(--accent-color);
+      border-color: rgba(240, 246, 252, 0.1);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    /* Single Program View (when ?id=... is present) */
+    #code-view-container {
+      display: none;
+      width: 100%;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    .code-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .code-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .code-id-badge {
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--accent-code);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .code-filename {
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .code-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .code-wrapper {
+      flex: 1;
+      padding: 16px;
+      overflow-x: auto;
+      background-color: var(--bg-primary);
+    }
+
+    pre#raw-code-output {
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #e6edf3;
+      white-space: pre;
+      tab-size: 4;
+    }
+
+    /* Dashboard Index View (when no ?id is present) */
+    #dashboard-view-container {
+      display: none;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .header-section {
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 20px;
+    }
+
+    .header-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .site-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .site-title-badge {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      padding: 2px 8px;
+      border-radius: 20px;
+      color: var(--text-secondary);
+      font-weight: normal;
+    }
+
+    .site-desc {
+      color: var(--text-secondary);
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    /* Quick Test Bar */
+    .quick-test-bar {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .test-form {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .input-field {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 6px 12px;
+      font-size: 14px;
+      border-radius: 6px;
+      outline: none;
+      font-family: var(--font-mono);
+    }
+    .input-field:focus {
+      border-color: var(--text-highlight);
+    }
+
+    /* Program Cards Grid */
+    .programs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .program-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      transition: border-color 0.2s ease, transform 0.15s ease;
+    }
+    .program-card:hover {
+      border-color: #58a6ff;
+      transform: translateY(-2px);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .card-id {
+      background-color: var(--bg-tertiary);
+      color: var(--accent-code);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .card-category {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-top: 8px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 12px;
+    }
+
+    /* Instructions / Docs Box */
+    .docs-section {
+      margin-top: 40px;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .docs-section h3 {
+      font-size: 16px;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .docs-code {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent-code);
+      display: block;
+      margin: 8px 0;
+      overflow-x: auto;
+    }
+
+    /* Loading / Error States */
+    .status-container {
+      padding: 40px 20px;
+      text-align: center;
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+
+    .status-error-title {
+      color: var(--danger-color);
+      font-size: 18px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    /* Toast Notification */
+    #toast {
+      visibility: hidden;
+      min-width: 200px;
+      background-color: var(--bg-tertiary);
+      color: #ffffff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 10px 16px;
+      position: fixed;
+      z-index: 1000;
+      bottom: 24px;
+      right: 24px;
+      border: 1px solid var(--accent-hover);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      font-size: 13px;
+      opacity: 0;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    #toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VIEW 1: Code Viewer (Active when ?id=... is in URL) -->
+  <div id="code-view-container">
+    <div class="code-topbar">
+      <div class="code-meta">
+        <a href="./" class="btn btn-sm" id="btn-back" title="Back to All Programs">← All Programs</a>
+        <span class="code-id-badge" id="view-id-badge">ID: ?</span>
+        <span class="code-filename" id="view-filename">file.c</span>
+      </div>
+      <div class="code-actions">
+        <button class="btn btn-sm btn-primary" id="btn-copy-code" onclick="copyCurrentCode()">📋 Copy Code</button>
+        <a class="btn btn-sm" id="btn-raw-mode" title="View as pure text response without UI">⚡ Plain Text</a>
+        <a class="btn btn-sm" id="btn-download" download>⬇️ Download .c</a>
+        <a class="btn btn-sm" id="btn-raw-url" target="_blank">🔗 Raw File</a>
+      </div>
+    </div>
+    <div class="code-wrapper">
+      <pre id="raw-code-output">Loading program...</pre>
+    </div>
+  </div>
+
+  <!-- VIEW 2: Dashboard Directory (Active when NO ?id is in URL) -->
+  <div id="dashboard-view-container">
+    <div class="header-section">
+      <div class="header-title-row">
+        <h1 class="site-title">
+          <span>⚡ C Code Repository</span>
+          <span class="site-title-badge" id="repo-count-badge">3 Programs</span>
+        </h1>
+        <div style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);">
+          Route: <code style="color: var(--accent-code);">?id=&lt;number&gt;</code>
+        </div>
+      </div>
+      <p class="site-desc">
+        Serverless C source file distributor hosted on GitHub Pages. Query directly with <code>?id=&lt;number&gt;</code> or browse below.
+      </p>
+    </div>
+
+    <!-- Quick Query / Test Bar -->
+    <div class="quick-test-bar">
+      <form class="test-form" onsubmit="handleTestSubmit(event)">
+        <label for="id-input" style="font-size: 13px; color: var(--text-secondary); font-weight: 500;">
+          Direct Access:
+        </label>
+        <input type="text" id="id-input" class="input-field" placeholder="e.g. 1, 2, 3" style="width: 140px;" required>
+        <button type="submit" class="btn btn-primary btn-sm">Load Program</button>
+      </form>
+
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <input type="text" id="search-filter" class="input-field" placeholder="🔍 Filter programs..." oninput="filterPrograms()" style="width: 220px;">
+      </div>
+    </div>
+
+    <!-- Programs Grid -->
+    <div class="programs-grid" id="programs-grid">
+      <!-- Injected by JavaScript -->
+    </div>
+
+    <!-- Documentation & Instructions -->
+    <div class="docs-section">
+      <h3>🚀 How to Use &amp; Integration Guide</h3>
+      <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 10px;">
+        This application requires <strong>zero backend servers</strong> and works entirely with static files hosted on GitHub Pages:
+      </p>
+      
+      <p style="font-size: 13px; color: var(--text-primary); margin-top: 10px;">
+        <strong>1. In a Browser:</strong><br>
+        Navigate to <span class="docs-code" id="example-browser-url">https://mohdsahlpa.github.io/xm?id=1</span>
+        to instantly view the C source code for program ID 1.
+      </p>
+
+      <p style="font-size: 13px; color: var(--text-primary); margin-top: 10px;">
+        <strong>2. In Command Line / Curl / Wget:</strong><br>
+        Static files are directly retrievable via HTTP:
+        <span class="docs-code" id="example-curl-url">curl -sL https://mohdsahlpa.github.io/xm/programs/1.c</span>
+      </p>
+
+      <p style="font-size: 13px; color: var(--text-primary); margin-top: 10px;">
+        <strong>3. Adding New C Programs:</strong><br>
+        Simply drop any new <code>&lt;id&gt;.c</code> file (e.g. <code>4.c</code>, <code>5.c</code>) into the <code>programs/</code> folder and push to GitHub. It becomes immediately accessible at <code>?id=4</code> without touching any code! Optionally update <code>programs/manifest.json</code> to include title &amp; description in this directory.
+      </p>
+    </div>
+  </div>
+
+  <!-- VIEW 3: Error Message State -->
+  <div id="error-view-container" class="status-container" style="display: none;">
+    <div class="status-error-title" id="error-title">Program Not Found</div>
+    <p id="error-message" style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">
+      The requested C program file could not be loaded.
+    </p>
+    <a href="./" class="btn btn-primary">← Return to All Programs</a>
+  </div>
+
+  <div id="toast">Copied to clipboard!</div>
+
+  <script>
+    let currentLoadedCode = "";
+    let manifestPrograms = [];
+
+    /**
+     * Resolves the correct relative path to programs/ regardless of whether
+     * the site is served from root (localhost:3000/) or subdirectory (/xm/).
+     */
+    function resolvePath(relativePath) {
+      let path = window.location.pathname;
+      if (path.endsWith('.html')) {
+        path = path.substring(0, path.lastIndexOf('/') + 1);
+      } else if (!path.endsWith('/')) {
+        path = path + '/';
+      }
+      return `${path}${relativePath}`;
+    }
+
+    /**
+     * Shows a brief toast popup
+     */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.className = 'show';
+      setTimeout(() => { toast.className = toast.className.replace('show', ''); }, 2200);
+    }
+
+    /**
+     * Copies code to clipboard
+     */
+    function copyCurrentCode() {
+      if (!currentLoadedCode) return;
+      navigator.clipboard.writeText(currentLoadedCode).then(() => {
+        showToast("✓ C Code copied to clipboard!");
+      }).catch(err => {
+        console.error("Clipboard copy failed:", err);
+      });
+    }
+
+    function copyText(text, label) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`✓ Copied ${label}!`);
+      });
+    }
+
+    /**
+     * Handle form submission in quick test bar
+     */
+    function handleTestSubmit(e) {
+      e.preventDefault();
+      const idVal = document.getElementById('id-input').value.trim();
+      if (idVal) {
+        window.location.search = `?id=${encodeURIComponent(idVal)}`;
+      }
+    }
+
+    /**
+     * Fetch and render a specific C program by ID
+     */
+    async function loadProgram(id) {
+      const codeView = document.getElementById('code-view-container');
+      const dashboardView = document.getElementById('dashboard-view-container');
+      const errorView = document.getElementById('error-view-container');
+      const codeOutput = document.getElementById('raw-code-output');
+
+      dashboardView.style.display = 'none';
+      errorView.style.display = 'none';
+      codeView.style.display = 'flex';
+
+      const cleanFilename = id.endsWith('.c') ? id : `${id}.c`;
+      const programUrl = resolvePath(`programs/${cleanFilename}`);
+
+      document.getElementById('view-id-badge').textContent = `ID: ${id}`;
+      document.getElementById('view-filename').textContent = cleanFilename;
+      document.getElementById('btn-raw-mode').href = `?id=${encodeURIComponent(id)}&raw=1`;
+      document.getElementById('btn-download').href = programUrl;
+      document.getElementById('btn-download').setAttribute('download', cleanFilename);
+      document.getElementById('btn-raw-url').href = programUrl;
+      codeOutput.textContent = `Fetching programs/${cleanFilename}...`;
+
+      try {
+        const response = await fetch(programUrl);
+        if (!response.ok) {
+          throw new Error(`File not found (HTTP ${response.status})`);
+        }
+        const text = await response.text();
+        currentLoadedCode = text;
+        codeOutput.textContent = text;
+        document.title = `ID ${id} - ${cleanFilename} | XM`;
+
+        // Check if raw query parameter was passed (e.g., ?id=1&raw=true)
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('raw') === 'true' || params.get('raw') === '1') {
+          // Replace entire document body with pure raw text for script consumption
+          document.body.innerHTML = '';
+          const pre = document.createElement('pre');
+          pre.style.cssText = 'margin:0;padding:16px;font-family:monospace;white-space:pre;color:#e6edf3;background:#0d1117;';
+          pre.textContent = text;
+          document.body.appendChild(pre);
+        }
+      } catch (err) {
+        codeView.style.display = 'none';
+        errorView.style.display = 'block';
+        document.getElementById('error-title').textContent = `Program '${id}' Not Found`;
+        document.getElementById('error-message').innerHTML = `
+          Could not locate <code>programs/${cleanFilename}</code>.<br>
+          Please make sure the file exists in the <code>programs/</code> folder.
+        `;
+      }
+    }
+
+    /**
+     * Fetch manifest.json and render directory cards
+     */
+    async function loadDashboard() {
+      const codeView = document.getElementById('code-view-container');
+      const dashboardView = document.getElementById('dashboard-view-container');
+      const errorView = document.getElementById('error-view-container');
+      const grid = document.getElementById('programs-grid');
+
+      codeView.style.display = 'none';
+      errorView.style.display = 'none';
+      dashboardView.style.display = 'block';
+
+      // Update example URLs with actual host
+      const hostUrl = window.location.origin + window.location.pathname.replace(/\/index\.html$/, '').replace(/\/$/, '');
+      document.getElementById('example-browser-url').textContent = `${hostUrl}?id=1`;
+      document.getElementById('example-curl-url').textContent = `curl -sL ${hostUrl}/programs/1.c`;
+
+      try {
+        const manifestUrl = resolvePath('programs/manifest.json');
+        const res = await fetch(manifestUrl);
+        if (res.ok) {
+          manifestPrograms = await res.json();
+        } else {
+          // Fallback if manifest is missing
+          manifestPrograms = [
+            { id: "1", filename: "1.c", title: "Program 1", category: "C Source", description: "Direct file: programs/1.c" },
+            { id: "2", filename: "2.c", title: "Program 2", category: "C Source", description: "Direct file: programs/2.c" },
+            { id: "3", filename: "3.c", title: "Program 3", category: "C Source", description: "Direct file: programs/3.c" }
+          ];
+        }
+      } catch {
+        manifestPrograms = [
+          { id: "1", filename: "1.c", title: "Program 1", category: "C Source", description: "Direct file: programs/1.c" },
+          { id: "2", filename: "2.c", title: "Program 2", category: "C Source", description: "Direct file: programs/2.c" },
+          { id: "3", filename: "3.c", title: "Program 3", category: "C Source", description: "Direct file: programs/3.c" }
+        ];
+      }
+
+      document.getElementById('repo-count-badge').textContent = `${manifestPrograms.length} Programs`;
+      renderProgramCards(manifestPrograms);
+    }
+
+    function renderProgramCards(programs) {
+      const grid = document.getElementById('programs-grid');
+      grid.innerHTML = '';
+
+      if (programs.length === 0) {
+        grid.innerHTML = '<div style="color: var(--text-secondary); grid-column: 1/-1; text-align: center; padding: 24px;">No programs found matching filter.</div>';
+        return;
+      }
+
+      programs.forEach(prog => {
+        const card = document.createElement('div');
+        card.className = 'program-card';
+
+        const directLink = `?id=${encodeURIComponent(prog.id)}`;
+        const rawFileUrl = resolvePath(`programs/${prog.filename || prog.id + '.c'}`);
+
+        card.innerHTML = `
+          <div>
+            <div class="card-top">
+              <span class="card-id">ID: ${prog.id}</span>
+              <span class="card-category">${prog.category || 'C Program'}</span>
+            </div>
+            <div class="card-title">${prog.title || prog.filename}</div>
+            <div class="card-desc">${prog.description || 'C source code file.'}</div>
+          </div>
+          <div class="card-footer">
+            <a href="${directLink}" class="btn btn-primary btn-sm">View Code (?id=${prog.id})</a>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-sm" onclick="quickFetchAndCopy('${prog.id}', '${prog.filename || prog.id + '.c'}')">Copy</button>
+              <a href="${rawFileUrl}" class="btn btn-sm" download="${prog.filename || prog.id + '.c'}">⬇️</a>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterPrograms() {
+      const q = document.getElementById('search-filter').value.toLowerCase().trim();
+      if (!q) {
+        renderProgramCards(manifestPrograms);
+        return;
+      }
+      const filtered = manifestPrograms.filter(p => 
+        p.id.toString().toLowerCase().includes(q) ||
+        (p.title && p.title.toLowerCase().includes(q)) ||
+        (p.category && p.category.toLowerCase().includes(q)) ||
+        (p.description && p.description.toLowerCase().includes(q))
+      );
+      renderProgramCards(filtered);
+    }
+
+    async function quickFetchAndCopy(id, filename) {
+      try {
+        const url = resolvePath(`programs/${filename}`);
+        const res = await fetch(url);
+        if (res.ok) {
+          const code = await res.text();
+          await navigator.clipboard.writeText(code);
+          showToast(`✓ Program ${id} copied!`);
+        } else {
+          showToast(`❌ Could not fetch ${filename}`);
+        }
+      } catch (e) {
+        showToast(`❌ Failed to copy program ${id}`);
+      }
+    }
+
+    /**
+     * Initialization Router
+     */
+    function init() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+
+      if (id !== null && id.trim() !== '') {
+        loadProgram(id.trim());
+      } else {
+        loadDashboard();
+      }
+    }
+
+    // Run router on load & when user navigates browser history
+    window.addEventListener('DOMContentLoaded', init);
+    window.addEventListener('popstate', init);
+  </script>
+</body>
+</html>

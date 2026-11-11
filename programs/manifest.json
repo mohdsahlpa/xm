@@ -1,0 +1,23 @@
+[
+  {
+    "id": "1",
+    "filename": "1.c",
+    "title": "Hello World & Arithmetic",
+    "category": "Basic I/O",
+    "description": "Standard I/O operations and fundamental arithmetic computations in C."
+  },
+  {
+    "id": "2",
+    "filename": "2.c",
+    "title": "Bubble Sort Algorithm",
+    "category": "Algorithms",
+    "description": "In-place ascending sorting of an integer array using bubble sort."
+  },
+  {
+    "id": "3",
+    "filename": "3.c",
+    "title": "Singly Linked List",
+    "category": "Data Structures",
+    "description": "Node allocation, end insertion, traversal, and dynamic memory freeing."
+  }
+]

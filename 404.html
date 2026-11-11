@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting | XM</title>
+  <script>
+    // GitHub Pages SPA redirect handler
+    // If a user visits /xm/1 or /xm/2.c directly, redirect to /xm?id=1
+    (function() {
+      const pathname = window.location.pathname;
+      const parts = pathname.split('/').filter(Boolean);
+      // If the last segment is a number or program name (e.g. "1" or "1.c")
+      const lastSegment = parts[parts.length - 1];
+      if (lastSegment && !lastSegment.includes('html')) {
+        const cleanId = lastSegment.replace(/\.c$/, '');
+        // Determine the repo base path (e.g. /xm/ or /)
+        const basePath = parts.length > 1 ? `/${parts[0]}/` : '/';
+        window.location.replace(`${basePath}?id=${encodeURIComponent(cleanId)}`);
+        return;
+      }
+      // Otherwise redirect to repo home
+      window.location.replace('./');
+    })();
+  </script>
+</head>
+<body style="background:#0d1117; color:#c9d1d9; font-family:sans-serif; text-align:center; padding-top:50px;">
+  <p>Redirecting to program...</p>
+</body>
+</html>
